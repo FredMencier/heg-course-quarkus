@@ -31,15 +31,15 @@ jobs:
       - name: Install dependencies
         run: nci
 
-      - name: Build
-        run: nr build --base /${{github.event.repository.name}}/
+      #- name: Build
+      #  run: nr build --base /${{github.event.repository.name}}/
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: spa-quarkus/dist
+          path: dist
 
   deploy:
     environment:
