@@ -7,6 +7,8 @@ Comparer les temps de startup selon les différentes versions
 - run en mode JVM avec un fat jar
 - run en mode JVM avec un fat jar et AOT Class Loading & Linking
 
+Utilisation du profile h2 : -Dspring.profiles.active=h2
+
 ## Run de l'application Springboot en mode JVM
 
 ```shell
