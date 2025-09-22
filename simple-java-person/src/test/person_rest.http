@@ -1,0 +1,65 @@
+@site=http://localhost:8081
+
+GET {{site}}/persons
+Accept: application/json
+
+###
+POST {{site}}/person
+Accept: application/json
+Content-Type: application/json
+
+{
+  "email" : "jacques@hesge.ch",
+  "name" : "jacques",
+  "age" : 30,
+  "genre": "MASCULIN",
+  "birthday": "2019-02-03"
+}
+
+###
+POST {{site}}/person
+Accept: application/json
+Content-Type: application/json
+
+{
+  "email" : "victor@hugo.ch",
+  "name" : "victor",
+  "age" : 30,
+  "genre": "MASCULIN",
+  "birthday": "2019-02-03",
+  "address" : [
+    {
+      "streetNo" : "12",
+      "streetName" : "rue beauregard",
+      "city" : "Geneve",
+      "postCode" : 1210,
+      "country" : "Suisse",
+      "addressType": "PRINCIPALE"
+    }
+  ]
+}
+
+###
+PUT {{site}}/person
+Accept: application/json
+Content-Type: application/json
+
+{
+  "email" : "jacques@hesge.ch",
+  "name" : "jacques",
+  "age" : 35,
+  "genre": "MASCULIN",
+  "birthday": "2019-02-03"
+}
+
+###
+DELETE {{site}}/person/jacques@hesge.ch
+Accept: application/json
+
+###
+GET {{site}}/person/jacques@hesge.ch
+Accept: application/json
+
+###
+GET {{site}}/persons/search?email=jacques@hesge.ch&name=
+Accept: application/json

@@ -1,0 +1,15 @@
+INSERT INTO `person` (`email`,`age`,`birthday`,`genre`,`name`) VALUES ('jacques@hesge.ch',22,'1990-04-20','MASCULIN','jacques');
+INSERT INTO `person` (`email`,`age`,`birthday`,`genre`,`name`) VALUES ('michel@hesge.ch',22,'2025-04-22','MASCULIN','michel');
+INSERT INTO `person` (`email`,`age`,`birthday`,`genre`,`name`) VALUES ('emma@hesge.ch',22,'2025-04-22','FEMININ','emma');
+INSERT INTO `person` (`email`,`age`,`birthday`,`genre`,`name`) VALUES ('lucie@hesge.ch',28,'1996-01-15','FEMININ','lucie');
+INSERT INTO `person` (`email`,`age`,`birthday`,`genre`,`name`) VALUES ('paul@hesge.ch',35,'1989-07-30','MASCULIN','paul');
+INSERT INTO `person` (`email`,`age`,`birthday`,`genre`,`name`) VALUES ('sophie@hesge.ch',31,'1993-11-05','FEMININ','sophie');
+INSERT INTO `address` (`id`,`address_type`,`city`,`country`,`post_code`,`street_name`,`street_no`,`email`) VALUES (1,'PRINCIPALE','Geneve','Suisse',1210,'rue beauregard','12','michel@hesge.ch');
+INSERT INTO `address` (`id`,`address_type`,`city`,`country`,`post_code`,`street_name`,`street_no`,`email`) VALUES (2,'SECONDAIRE','Lausanne','Suisse',1210,'rue beauregard','22','michel@hesge.ch');
+INSERT INTO `address` (`id`,`address_type`,`city`,`country`,`post_code`,`street_name`,`street_no`,`email`) VALUES (3,'PRINCIPALE','Petit-Lancy','Suisse',1210,'rue des morgines','6','jacques@hesge.ch');
+INSERT INTO `address` (`id`,`address_type`,`city`,`country`,`post_code`,`street_name`,`street_no`,`email`) VALUES (4,'PRINCIPALE','Nyon','Suisse',1260,'avenue du lac','5','lucie@hesge.ch');
+INSERT INTO `address` (`id`,`address_type`,`city`,`country`,`post_code`,`street_name`,`street_no`,`email`) VALUES (5,'SECONDAIRE','Vevey','Suisse',1800,'rue du marché','10','lucie@hesge.ch');
+INSERT INTO `address` (`id`,`address_type`,`city`,`country`,`post_code`,`street_name`,`street_no`,`email`) VALUES (6,'PRINCIPALE','Fribourg','Suisse',1700,'rue de la gare','3','paul@hesge.ch');
+INSERT INTO `address` (`id`,`address_type`,`city`,`country`,`post_code`,`street_name`,`street_no`,`email`) VALUES (7,'SECONDAIRE','Sion','Suisse',1950,'rue du Rhône','8','paul@hesge.ch');
+INSERT INTO `address` (`id`,`address_type`,`city`,`country`,`post_code`,`street_name`,`street_no`,`email`) VALUES (8,'PRINCIPALE','Neuchâtel','Suisse',2000,'rue des écoles','15','sophie@hesge.ch');
+INSERT INTO `address` (`id`,`address_type`,`city`,`country`,`post_code`,`street_name`,`street_no`,`email`) VALUES (9,'SECONDAIRE','Yverdon','Suisse',1400,'rue du collège','20','sophie@hesge.ch');

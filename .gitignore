@@ -17,3 +17,6 @@ buildNumber.properties
 .classpath
 .idea/
 *.log
+.DS_Store
+*.aot
+*.aotconf
