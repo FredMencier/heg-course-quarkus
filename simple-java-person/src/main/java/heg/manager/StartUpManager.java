@@ -25,7 +25,7 @@ public class StartUpManager {
     @PostConstruct
     public void init() {
         LOG.info("Start Person Springboot application");
-        LOG.info(List.of("Use Profile : " + environment.getDefaultProfiles()));
+        LOG.info(List.of("Use Profile : " + Arrays.stream(environment.getDefaultProfiles()).toList()));
         LOG.info("Mail server hostname : " + mailServerConfig.getHostName());
         LOG.info("Mail server port : " + mailServerConfig.getPort());
         LOG.info("Mail server from : " + mailServerConfig.getFrom());

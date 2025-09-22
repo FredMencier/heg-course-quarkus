@@ -2,7 +2,8 @@
 
 - Application Springboot REST + DB (MySQL) + Properties + Timer
 
-Comparer les termps de startup selon les différentes versions
+Comparer les temps de startup selon les différentes versions
+- run en mode JVM dev spring-boot:run
 - run en mode JVM avec un fat jar
 - run en mode JVM avec un fat jar et AOT Class Loading & Linking
 
@@ -55,8 +56,18 @@ mvn clean package -Pnative
 
 ## Construire un binaire natif encapsulé dans une image Docker
 
+Utiliser cette url pour acceder à MySql depuis le container Springboot:
+
+```properties
+spring.datasource.url=jdbc:mysql://host.docker.internal:3306/person
+```
+
 ```shell
 mvn spring-boot:build-image
 ```
 
 Run de l'application Springboot en mode Natif avec Docker :
+
+```shell
+docker run -i --rm -p 8080:8080 person-app:1.0.0-SNAPSHOT
+```
