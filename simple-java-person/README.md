@@ -15,6 +15,23 @@ Comparer les temps de startup selon les différentes configurations
 
 ---
 
+📌 Tableau récapitulatif des temps de démarrage
+
+| Configuration                                    | Start Time                        | Taille du livrable |
+|--------------------------------------------------|-----------------------------------|--------------------|
+| JVM dev spring-boot:run                          | Started in 1.848 seconds          |
+| JVM avec un fat jar                              | Started in 2.562 seconds          |
+| JVM avec un fat jar + Class Loading & Linking    | Started in 1.656 seconds          |
+| docker JVM avec buildpack                        | 🐢 Started in 3.074 seconds       |
+| docker JVM + CDS + AOT avec buildpack            | Started in 1.63 seconds           |
+| docker JVM + CDS + AOT + Class Loading & Linking | ?                                 |
+| natif avec GraalVM                               | 🏃‍♂️‍➡️ Started in 0.262 seconds |
+| docker natif avec buildpack                      | ?                                 |
+
+
+
+---
+
 Utilisation du profile h2 : __-Dspring.profiles.active=h2__
 
 Utiliser cette url pour acceder à MySql depuis le container :
@@ -187,18 +204,3 @@ Commande permettant de construire l'image docker __NATIVE__ avec le plugin __nat
   ```shell
   docker run -i --rm -p 8080:8080 docker.io/library/person-app-jvm:1.0.0-SNAPSHOT
   ```
-
----
-
-📌 Tableau récapitulatif des temps de démarrage
-
-| Configuration                                    | Start Time                        | Taille du livrable |
-|--------------------------------------------------|-----------------------------------|--------------------|
-| JVM dev spring-boot:run                          | Started in 1.848 seconds          |
-| JVM avec un fat jar                              | Started in 2.562 seconds          |
-| JVM avec un fat jar + Class Loading & Linking    | Started in 1.656 seconds          |
-| docker JVM avec buildpack                        | 🐢 Started in 3.074 seconds       |
-| docker JVM + CDS + AOT avec buildpack            | Started in 1.63 seconds           |
-| docker JVM + CDS + AOT + Class Loading & Linking | ?                                 |
-| natif avec GraalVM                               | 🏃‍♂️‍➡️ Started in 0.262 seconds |
-| docker natif avec buildpack                      | ?                                 |
