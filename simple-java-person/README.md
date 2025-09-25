@@ -11,7 +11,7 @@ Comparer les temps de startup selon les différentes configurations
 - build + run en mode container docker JVM + CDS + AOT avec buildpack
 - build + run en mode container docker JVM + CDS + AOT + Class Loading & Linking
 - build + run en mode natif avec GraalVM (necessite GraalVM installé)
-- build + run en mode container docker natif avec GraalVM + buildpack
+- build + run en mode container docker natif buildpack
 
 ---
 
@@ -19,16 +19,14 @@ Comparer les temps de startup selon les différentes configurations
 
 | Configuration                                    | Start Time                        | Taille du livrable |
 |--------------------------------------------------|-----------------------------------|--------------------|
-| JVM dev spring-boot:run                          | Started in 1.848 seconds          |
-| JVM avec un fat jar                              | Started in 2.562 seconds          |
-| JVM avec un fat jar + Class Loading & Linking    | Started in 1.656 seconds          |
-| docker JVM avec buildpack                        | 🐢 Started in 3.074 seconds       |
-| docker JVM + CDS + AOT avec buildpack            | Started in 1.63 seconds           |
-| docker JVM + CDS + AOT + Class Loading & Linking | ?                                 |
-| natif avec GraalVM                               | 🏃‍♂️‍➡️ Started in 0.262 seconds |
-| docker natif avec buildpack                      | ?                                 |
-
-
+| JVM dev spring-boot:run                          | Started in 1.848 seconds          |                    |
+| JVM avec un fat jar                              | Started in 2.562 seconds          |                    |
+| JVM avec un fat jar + Class Loading & Linking    | Started in 1.656 seconds          |                    |
+| docker JVM avec buildpack                        | 🐢 Started in 3.074 seconds       |                    |
+| docker JVM + CDS + AOT avec buildpack            | Started in 1.63 seconds           |                    |
+| docker JVM + CDS + AOT + Class Loading & Linking | ?                                 |                    |
+| natif avec GraalVM                               | 🏃‍♂️‍➡️ Started in 0.236 seconds | 185 Mo             |
+| docker natif avec buildpack                      | Started in 0.554 seconds          |                    |
 
 ---
 
@@ -98,6 +96,7 @@ spring.datasource.url=jdbc:mysql://host.docker.internal:3306/person
     <configuration>
         <image>
             <env>
+              <BP_JVM_VERSION>21</BP_JVM_VERSION>
               <BPE_DELIM_JAVA_TOOL_OPTIONS xml:space="preserve"> </BPE_DELIM_JAVA_TOOL_OPTIONS>
               <BPE_APPEND_JAVA_TOOL_OPTIONS>-Dspring.profiles.active=h2</BPE_APPEND_JAVA_TOOL_OPTIONS>
             </env>
@@ -111,7 +110,7 @@ buildpacks pour construire l'image.
 
 - Build de l'application
   ```shell
-  mvn spring-boot:build-image
+  mvn clean -Dimage.suffix=jvm spring-boot:build-image
   ```
 
 - Run de l'application
@@ -143,7 +142,7 @@ Dans la configuration du spring-boot-maven-plugin, ajouter les options suivantes
 
 - Build de l'application
   ```shell
-  mvn spring-boot:build-image
+  mvn clean -Dimage.suffix=jvm spring-boot:build-image
   ```
 
 - Run de l'application
@@ -169,38 +168,30 @@ Il faut préalablement avoir installé GraalVM et le support natif pour Java. Po
   ```log
   Apache Maven 3.9.6 (bc0240f3c744dd6b6ec2920b3cd08dcc295161ae)
   Maven home: /Users/fredericmencier/Projects/apache-maven-3.9.6
-  Java version: 26, vendor: Oracle Corporation, runtime: /Users/fredericmencier/.sdkman/candidates/java/26.ea.13-graal
+  Java version: 21.0.8, vendor: Oracle Corporation, runtime: /Users/fredericmencier/.sdkman/candidates/java/21.0.8-graal
   Default locale: fr_FR, platform encoding: UTF-8
   OS name: "mac os x", version: "14.4.1", arch: "aarch64", family: "mac"
   ```
 
 - Build de l'application
   ```shell
-  mvn native:compile -Pnative
+  mvn clean native:compile -Pnative
   ```
 - Run de l'application
   ```shell
   ./target/person-app
   ```
 
-## Application Springboot en mode container docker natif buildpack
+## Application Springboot en mode container docker natif avec buildpack
 
 Commande permettant de construire l'image docker __NATIVE__ avec le plugin __native-maven-plugin__. Ce plugin utilise buildpacks pour construire l'image.
 
 - Build de l'application
   ```shell
-  mvn spring-boot:build-image -Pnative
+  mvn -Dimage.suffix=native spring-boot:build-image -Pnative
   ```
-
-⚠️Actuellement le build échoue sur une dépendence non disponible de Liberica
-```log
-[INFO]     [creator]     Paketo Buildpack for BellSoft Liberica 11.3.0
-[INFO]     [creator]       unable to find dependency for native-image-svm 26 - make sure the buildpack includes the Java Native version you have requested
-[INFO]     [creator]       no valid dependencies for native-image-svm, 26, and io.buildpacks.stacks.noble in [(jdk, 8.0.462, [*]) (jre, 8.0.462, [*]) (jdk, 11.0.28, [*]) (jre, 11.0.28, [*]) (native-image-svm, 11.0.22, [*]) (jdk, 17.0.16, [*]) (jre, 17.0.16, [*]) (native-image-svm, 17.0.16, [*]) (jdk, 21.0.8, [*]) (jre, 21.0.8, [*]) (native-image-svm, 24.0.2, [*]) (jdk, 25.0.0, [*]) (jre, 25.0.0, [*]) (native-image-svm, 21.0.8, [*]) (jdk, 8.0.462, [*]) (jre, 8.0.462, [*]) (jdk, 11.0.28, [*]) (jre, 11.0.28, [*]) (native-image-svm, 11.0.22, [*]) (jdk, 17.0.16, [*]) (jre, 17.0.16, [*]) (native-image-svm, 17.0.16, [*]) (jdk, 21.0.8, [*]) (jre, 21.0.8, [*]) (native-image-svm, 21.0.8, [*]) (jdk, 25.0.0, [*]) (jre, 25.0.0, [*]) (native-image-svm, 24.0.2, [*])]
-[INFO]     [creator]     ERROR: failed to build: exit status 1
-```
 
 - Run de l'application
   ```shell
-  docker run -i --rm -p 8080:8080 docker.io/library/person-app-jvm:1.0.0-SNAPSHOT
+  docker run -i --rm -p 8080:8080 docker.io/library/person-app-native:1.0.0-SNAPSHOT
   ```
