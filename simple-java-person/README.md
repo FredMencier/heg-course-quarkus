@@ -8,8 +8,8 @@ Comparer les temps de startup selon les différentes configurations
 - build + run en mode JVM avec un fat jar
 - build + run en mode JVM avec un fat jar + Class Loading & Linking (feature jdk >= 24)
 - build + run en mode container docker JVM avec buildpack
-- build + run en mode container docker JVM + CDS + AOT avec buildpack
-- build + run en mode container docker JVM + CDS + AOT + Class Loading & Linking
+- build + run en mode container docker JVM + AOT Spring + CDS avec buildpack
+- build + run en mode container docker JVM + AOT Spring + AOT Class Loading & Linking (Leyden)
 - build + run en mode natif avec GraalVM (necessite GraalVM installé)
 - build + run en mode container docker natif buildpack
 
@@ -17,16 +17,16 @@ Comparer les temps de startup selon les différentes configurations
 
 📌 Tableau récapitulatif des temps de démarrage
 
-| Configuration                                    | Start Time                        | Taille du livrable |
-|--------------------------------------------------|-----------------------------------|--------------------|
-| JVM dev spring-boot:run                          | Started in 1.848 seconds          |                    |
-| JVM avec un fat jar                              | Started in 2.562 seconds          |                    |
-| JVM avec un fat jar + Class Loading & Linking    | Started in 1.656 seconds          |                    |
-| docker JVM avec buildpack                        | 🐢 Started in 3.074 seconds       |                    |
-| docker JVM + CDS + AOT avec buildpack            | Started in 1.63 seconds           |                    |
-| docker JVM + CDS + AOT + Class Loading & Linking | ?                                 |                    |
-| natif avec GraalVM                               | 🏃‍♂️‍➡️ Started in 0.236 seconds | 185 Mo             |
-| docker natif avec buildpack                      | Started in 0.554 seconds          |                    |
+| Configuration                                         | Start Time                        | Taille du livrable |
+|-------------------------------------------------------|-----------------------------------|--------------------|
+| JVM dev spring-boot:run                               | Started in 1.848 seconds          |                    |
+| JVM avec un fat jar                                   | Started in 2.562 seconds          |                    |
+| JVM avec un fat jar + Class Loading & Linking         | Started in 1.656 seconds          |                    |
+| docker JVM avec buildpack                             | 🐢 Started in 3.074 seconds       |                    |
+| docker JVM + AOT Spring + CDS avec buildpack          | Started in 1.63 seconds           |                    |
+| docker JVM + AOT Spring + AOT Class Loading & Linking | ?                                 |                    |
+| natif avec GraalVM                                    | 🏃‍♂️‍➡️ Started in 0.236 seconds | 185 Mo             |
+| docker natif avec buildpack                           | Started in 0.554 seconds          |                    |
 
 ---
 
