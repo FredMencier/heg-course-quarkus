@@ -150,10 +150,96 @@ Dans la configuration du spring-boot-maven-plugin, ajouter les options suivantes
   docker run -i --rm -p 8080:8080 docker.io/library/person-app-jvm:1.0.0-SNAPSHOT
   ```
 
-## Application Springboot en mode container docker JVM + CDS + AOT + Class Loading & Linking
+## Application Springboot en mode container docker JVM AOT Spring + CDS ou AOT Spring +  AOT Class Loading & Linking
 
-La génération du fichier AOT Cache n'est pas possible actuellement avec buildpack
+La génération du fichier AOT Cache (Projet Leyden) n'est pas possible actuellement avec buildpack. Nous utilisons un packaging classique avec Dockerfile.
 
+Rappels :
+- `CDS` (Class Data Sharing) : permet de pré-charger et partager des classes dans une archive (__.jsa__).
+  - On l'utilise avec l'option `-XX:SharedArchiveFile=`
+  - Le `spring-boot-maven-plugin` avec l'option `BP_SPRING_CDS_ENABLED` produit une image docker avec cette optimisation
+- `AOT Spring` : Il est géré par spring lui-même via le goal `spring-boot:process-aot`
+  - Cela produit du bytecode spécifique ajouté au jar applicatif. La JVM ne voit que les classes du jar file
+  - Le `spring-boot-maven-plugin` avec l'option `BP_JVM_AOT_ENABLED`  produit une image docker avec cette optimisation
+- `JVM AOT Cache` : Génère du code natif et fabrique un cache pour accélérer les démarrages
+  - On l'utilise avec l'option `-XX:AOTCache=`
+
+✅ La cohabitation entre `-XX:SharedArchiveFile=` et `-XX:AOTCache=` n'est pas possible mais il faut savoir que :
+  - Pour un jdk < 24 l'utilisation de __CDS__ est intéressante  
+  - Pour un jdk >= 24 il est préférable d'utiliser __AOTCache__
+
+### Mise en oeuvre à l'aide d'un container docker :
+
+1️⃣ `AOT Spring` : Activer l'execution du `process-aot` dans le `spring-boot-maven-plugin` du pom.xml
+
+```xml
+    <executions>
+        <execution>
+            <goals>
+                <goal>process-aot</goal>
+            </goals>
+        </execution>
+    </executions>
+```
+Build de l'application :
+```shell
+  mvn clean package
+```
+
+Le jar applicatif contient maintenant le cache AOT Spring
+
+2️⃣ `CDS` : Utilisation de `java -XX:ArchiveClassesAtExit=application.jsa`
+
+Docker file utilisé pour activer CDS sur l'application :
+
+```dockerfile
+  FROM bellsoft/liberica-openjre-debian:25-cds
+  WORKDIR /application
+  ARG JAR_FILE=target/*.jar
+  # Copy the jar file to the working directory and rename it to application.jar
+  COPY ${JAR_FILE} application.jar
+  # Execute the CDS training run
+  RUN java -XX:ArchiveClassesAtExit=application.jsa -Dspring.context.exit=onRefresh -Dspring.profiles.active=h2 -jar application.jar
+  # Start the application jar with CDS and AOT Spring
+  ENTRYPOINT ["java", "-XX:SharedArchiveFile=application.jsa", "-Dspring.profiles.active=h2", "-jar", "application.jar"]
+```
+
+Packaging de l'application dans une image docker :
+  ```shell
+    docker build -f src/main/docker/Dockerfile.jvm_cds -t springboot-person-app-jvm-cds:person-app-1.0.0-SNAPSHOT .
+  ```
+
+Run de l'application
+  ```shell
+    docker run -i --rm -p 8080:8080 springboot-person-app-jvm-cds:person-app-1.0.0-SNAPSHOT
+  ```
+
+3️⃣ `JVM AOT Cache` :
+
+Ajouter dans le Dockerfile les instructions permettant la création du cache AOT
+
+```dockerfile
+  FROM bellsoft/liberica-openjre-debian:25-cds
+  WORKDIR /application
+  ARG JAR_FILE=target/*.jar
+  # Copy the jar file to the working directory and rename it to application.jar
+  COPY ${JAR_FILE} application.jar
+  # Execute the AOT cache training run
+  RUN java -XX:AOTMode=record -XX:AOTConfiguration=app.aotconf -Dspring.context.exit=onRefresh -jar application.jar
+  RUN java -XX:AOTMode=create -XX:AOTConfiguration=app.aotconf -XX:AOTCache=app.aot -jar application.jar && rm app.aotconf
+  # Start the application jar with CDS and AOT Spring and AOT Cache
+  ENTRYPOINT ["java", "-XX:AOTCache=app.aot", "-jar", "application.jar"]
+```
+
+Packaging de l'application dans une image docker :
+  ```shell
+    docker build -f src/main/docker/Dockerfile.jvm_aotcache -t springboot-person-app-jvm-aotcache:person-app-1.0.0-SNAPSHOT .
+  ```
+
+Run de l'application
+  ```shell
+    docker run -i --rm -p 8080:8080 springboot-person-app-jvm-aotcache:person-app-1.0.0-SNAPSHOT
+  ```
 
 ## Application Springboot en mode natif avec GraalVM (necessite GraalVM installé)
 
