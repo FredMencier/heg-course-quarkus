@@ -6,7 +6,7 @@ Comparer les temps de startup selon les différentes configurations
 
 - build + run en mode JVM dev spring-boot:run
 - build + run en mode JVM avec un fat jar
-- build + run en mode JVM avec un fat jar + Class Loading & Linking (feature jdk >= 24)
+- build + run en mode JVM avec un fat jar + Class Loading & Linking (feature jdk >= 24) [JEP 514](https://openjdk.org/jeps/514)
 - build + run en mode container docker JVM avec buildpack
 - build + run en mode container docker JVM + AOT Spring + CDS avec buildpack
 - build + run en mode container docker JVM + AOT Spring + AOT Class Loading & Linking (Leyden)
@@ -19,14 +19,24 @@ Comparer les temps de startup selon les différentes configurations
 
 | Configuration                                         | Start Time                        | Taille du livrable |
 |-------------------------------------------------------|-----------------------------------|--------------------|
-| JVM dev spring-boot:run                               | Started in 1.848 seconds          |                    |
+| JVM dev spring-boot:run                               | Started in 1.848 seconds          | NA                 |
 | JVM avec un fat jar                                   | Started in 2.562 seconds          |                    |
-| JVM avec un fat jar + Class Loading & Linking         | Started in 1.656 seconds          |                    |
+| JVM avec un fat jar + AOT Class Loading & Linking     | Started in 1.656 seconds          |                    |
 | docker JVM avec buildpack                             | 🐢 Started in 3.074 seconds       |                    |
 | docker JVM + AOT Spring + CDS avec buildpack          | Started in 1.63 seconds           |                    |
 | docker JVM + AOT Spring + AOT Class Loading & Linking | ?                                 |                    |
 | natif avec GraalVM                                    | 🏃‍♂️‍➡️ Started in 0.236 seconds | 185 Mo             |
 | docker natif avec buildpack                           | Started in 0.554 seconds          |                    |
+
+```mermaid
+xychart-beta
+  title "Start Time Comparison"
+  x-axis ["JVM jar", "JVM jar + Class Loading & Linking", Natif, "docker JVM", "docker JVM + AOT Spring + CDS"]
+  y-axis "Start Time in s" 0 --> 3.5
+  bar [2.562, 1.656, 0.236, 3.074, 1.63]
+  line [2.562, 1.656, 0.236, 3.074, 1.63] 
+```
+
 
 ---
 
@@ -86,6 +96,39 @@ spring.datasource.url=jdbc:mysql://host.docker.internal:3306/person
 - Run de l'application
   ```shell
   java -XX:AOTCache=person.aot -Dspring.profiles.active=h2 -jar target/person-app-1.0.0-SNAPSHOT.jar
+  ```
+## Avec java 25 [JEP 514](https://openjdk.org/jeps/514), [JEP 515](https://openjdk.org/jeps/515), [JEP 519](https://openjdk.org/jeps/519), [JEP 521](https://openjdk.org/jeps/521)
+
+### JEP 514 : Ahead-of-Time Class Loading & Linking
+Le `AOTMode=record` et `AOTMode=create` peuvent être combinés en une seule commande : `AOTCacheOutput`
+
+  1️⃣ Création du fichier de cache `person.aot`
+  ```shell
+    java -XX:AOTCacheOutput=person.aotconf -Dspring.context.exit=onRefresh -cp target/person-app-1.0.0-SNAPSHOT.jar
+  ```
+
+  - Run de l'application
+    ```shell
+    java -XX:AOTCache=person.aot -Dspring.profiles.active=h2 -jar target/person-app-1.0.0-SNAPSHOT.jar
+    ```
+
+### JEP 515 : Ahead-of-Time Method Profiling
+Cette fonctionnalité vient par défaut avec le java 25. Il n'y a pas de paramètre spécifique à ajouter.
+
+### JEP 519 : Compact Object Headers
+
+- Run de l'application
+  ```shell
+  java -XX:+UseCompactObjectHeaders -XX:AOTCache=person.aot -Dspring.profiles.active=h2 -jar target/person-app-1.0.0-SNAPSHOT.jar
+  ```
+
+### JEP 521: Generational Shenandoah
+
+Utiliser un openjdk 25 (Liberica par exemple)
+
+- Run de l'application
+  ```shell
+  java -XX:+UseShenandoahGC -XX:ShenandoahGCMode=generational  -XX:AOTCache=person.aot -Dspring.profiles.active=h2 -jar target/person-app-1.0.0-SNAPSHOT.jar
   ```
 
 ## Application Springboot en mode container docker JVM avec buildpack
@@ -227,7 +270,7 @@ Ajouter dans le Dockerfile les instructions permettant la création du cache AOT
   # Execute the AOT cache training run
   RUN java -XX:AOTMode=record -XX:AOTConfiguration=app.aotconf -Dspring.context.exit=onRefresh -jar application.jar
   RUN java -XX:AOTMode=create -XX:AOTConfiguration=app.aotconf -XX:AOTCache=app.aot -jar application.jar && rm app.aotconf
-  # Start the application jar with CDS and AOT Spring and AOT Cache
+  # Start the application jar AOT Spring and AOT Cache
   ENTRYPOINT ["java", "-XX:AOTCache=app.aot", "-jar", "application.jar"]
 ```
 
