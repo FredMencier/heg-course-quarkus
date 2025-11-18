@@ -229,7 +229,11 @@ Build de l'application :
   mvn clean package
 ```
 
-Le jar applicatif contient maintenant le cache AOT Spring
+Le jar applicatif contient maintenant le cache AOT Spring. Pour démarrer l'application springboot en mode AOT il faut activer la properties `-Dspring.aot.enabled=true`
+```shell
+  java -Dspring.aot.enabled=true -jar target/xxxxx.jar
+```
+
 
 2️⃣ `CDS` : Utilisation de `java -XX:ArchiveClassesAtExit=application.jsa`
 
