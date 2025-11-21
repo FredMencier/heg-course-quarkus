@@ -13,7 +13,7 @@ OS name: "mac os x", version: "26.0.1", arch: "aarch64", family: "mac"
 ```
 
 - [Application Springboot en mode JVM dev](#Application-Springboot-en-mode-JVM-dev)
-- [Application Springboot en mode JVM avec un fat jar](#Application-Springboot-en-mode-JVM avec-un-fat-jar)
+- [Application Springboot en mode JVM avec un fat jar](#Application-Springboot-en-mode-JVM-avec-un-fat-jar)
 - [Application Springboot en mode JVM avec un fat jar + AOT Spring](#Application-Springboot-en-mode-JVM-avec-un-fat-jar-AOT-Spring)
 - [Application Springboot en mode JVM avec un fat jar + Class Loading & Linking (jdk 25)](#Application-Springboot-en-mode-JVM-avec-un-fat-jar-Class-Loading-Linking-jdk-25) - [JEP 514](https://openjdk.org/jeps/514)
 - [Application Springboot en mode container docker JVM avec buildpack](#Application-Springboot-en-mode-container-docker-JVM-avec-buildpack)
