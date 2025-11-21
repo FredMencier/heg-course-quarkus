@@ -94,6 +94,119 @@
         </dependency>
     </dependencies>
 
+    <profiles>
+        <profile>
+            <id>sb_classic</id>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                        <configuration>
+                            <profiles>
+                                <profile>h2</profile>
+                            </profiles>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+
+        </profile>
+
+        <profile>
+            <id>sb_classic_aotspring</id>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                        <configuration>
+                            <profiles>
+                                <profile>h2</profile>
+                            </profiles>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>process-aot</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+
+        </profile>
+
+        <profile>
+            <id>sb_classic_docker_buildpack</id>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                        <configuration>
+                            <profiles>
+                                <profile>h2</profile>
+                            </profiles>
+                            <image>
+                                <env>
+                                    <BP_JVM_VERSION>21</BP_JVM_VERSION>
+                                    <BPE_DELIM_JAVA_TOOL_OPTIONS xml:space="preserve"> </BPE_DELIM_JAVA_TOOL_OPTIONS>
+                                    <BPE_APPEND_JAVA_TOOL_OPTIONS>-Dspring.profiles.active=h2
+                                    </BPE_APPEND_JAVA_TOOL_OPTIONS>
+                                </env>
+                                <name>${project.artifactId}-${image.suffix}:${project.version}</name>
+                            </image>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+
+        </profile>
+
+        <profile>
+            <id>sb_cds_aot_docker_buildpack</id>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                        <configuration>
+                            <profiles>
+                                <profile>h2</profile>
+                            </profiles>
+                            <image>
+                                <env>
+                                    <BP_JVM_VERSION>21</BP_JVM_VERSION>
+                                    <BPE_DELIM_JAVA_TOOL_OPTIONS xml:space="preserve"> </BPE_DELIM_JAVA_TOOL_OPTIONS>
+                                    <BPE_APPEND_JAVA_TOOL_OPTIONS>-Dspring.profiles.active=h2
+                                    </BPE_APPEND_JAVA_TOOL_OPTIONS>
+                                    <BP_SPRING_AOT_ENABLED>true</BP_SPRING_AOT_ENABLED>
+                                    <BP_JVM_CDS_ENABLED>true</BP_JVM_CDS_ENABLED>
+                                </env>
+                                <name>${project.artifactId}-${image.suffix}:${project.version}</name>
+                            </image>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>process-aot</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+
+        </profile>
+
+    </profiles>
+
     <build>
         <plugins>
             <plugin>
@@ -103,28 +216,14 @@
                     <profiles>
                         <profile>h2</profile>
                     </profiles>
-                    <image>
-                        <env>
-                            <BP_JVM_VERSION>21</BP_JVM_VERSION>
-                            <BPE_DELIM_JAVA_TOOL_OPTIONS xml:space="preserve"> </BPE_DELIM_JAVA_TOOL_OPTIONS>
-                            <BPE_APPEND_JAVA_TOOL_OPTIONS>-Dspring.profiles.active=h2</BPE_APPEND_JAVA_TOOL_OPTIONS>
-                            <BP_SPRING_AOT_ENABLED>true</BP_SPRING_AOT_ENABLED>
-                            <BP_JVM_CDS_ENABLED>true</BP_JVM_CDS_ENABLED>
-                        </env>
-                        <name>${project.artifactId}-${image.suffix}:${project.version}</name>
-                    </image>
                 </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>process-aot</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.graalvm.buildtools</groupId>
                 <artifactId>native-maven-plugin</artifactId>
+                <configuration>
+                    <imageName>person-app-native</imageName>
+                </configuration>
             </plugin>
         </plugins>
     </build>

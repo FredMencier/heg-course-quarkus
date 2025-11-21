@@ -2,44 +2,78 @@
 
 ### Application Springboot REST + DB (MySQL ou H2) + Properties + Timer
 
-Comparer les temps de startup selon les différentes configurations
+Comparaison des temps de startup selon les différentes configurations.
+Les tests ont été réalisé avec la configuration suivante sauf lors de l'utilisation des optimisations aot spécifique au jdk25
+```log
+Apache Maven 3.9.6 (bc0240f3c744dd6b6ec2920b3cd08dcc295161ae)
+Maven home: /Users/fredericmencier/Projects/apache-maven-3.9.6
+Java version: 21.0.4, vendor: Oracle Corporation, runtime: /Users/fredericmencier/.sdkman/candidates/java/21.0.4-oracle
+Default locale: fr_FR, platform encoding: UTF-8
+OS name: "mac os x", version: "26.0.1", arch: "aarch64", family: "mac"
+```
 
-- build + run en mode JVM dev spring-boot:run
-- build + run en mode JVM avec un fat jar
-- build + run en mode JVM avec un fat jar + Class Loading & Linking (feature jdk >= 24) [JEP 514](https://openjdk.org/jeps/514)
-- build + run en mode container docker JVM avec buildpack
-- build + run en mode container docker JVM + AOT Spring + CDS avec buildpack
-- build + run en mode container docker JVM + AOT Spring + AOT Class Loading & Linking (Leyden)
-- build + run en mode natif avec GraalVM (necessite GraalVM installé)
-- build + run en mode container docker natif buildpack
+- [Application Springboot en mode JVM dev](#Application Springboot en mode JVM dev)
+- [Application Springboot en mode JVM avec un fat jar](#Application Springboot en mode JVM avec un fat jar)
+- [Application Springboot en mode JVM avec un fat jar + AOT Spring](#Application Springboot en mode JVM avec un fat jar AOT Spring)
+- [Application Springboot en mode JVM avec un fat jar + Class Loading & Linking (jdk 25)](#Application Springboot en mode JVM avec un fat jar Class Loading Linking (jdk 25)) - [JEP 514](https://openjdk.org/jeps/514)
+- [Application Springboot en mode container docker JVM avec buildpack](#Application Springboot en mode container docker JVM avec buildpack)
+- [Application Springboot en mode container docker JVM + CDS + AOT Spring avec buildpack](#Application Springboot en mode container docker JVM CDS AOT Spring avec buildpack)
+- [Application Springboot en mode container docker JVM + AOT Class Loading & Linking (jdk 25)](#Application Springboot en mode container docker JVM AOT Class Loading Linking (jdk 25))
+- [Application Springboot en mode natif avec GraalVM (necessite GraalVM installé)](#Application Springboot en mode natif avec GraalVM (necessite GraalVM installé))
+- [Application Springboot en mode container docker natif avec buildpack](Application Springboot en mode container docker natif avec buildpack)
 
 ---
 
 📌 Tableau récapitulatif des temps de démarrage
 
-| Configuration                                         | Start Time                        | Taille du livrable |
-|-------------------------------------------------------|-----------------------------------|--------------------|
-| JVM dev spring-boot:run                               | Started in 1.848 seconds          | NA                 |
-| JVM avec un fat jar                                   | Started in 2.562 seconds          |                    |
-| JVM avec un fat jar + AOT Class Loading & Linking     | Started in 1.656 seconds          |                    |
-| docker JVM avec buildpack                             | 🐢 Started in 3.074 seconds       |                    |
-| docker JVM + AOT Spring + CDS avec buildpack          | Started in 1.63 seconds           |                    |
-| docker JVM + AOT Spring + AOT Class Loading & Linking | ?                                 |                    |
-| natif avec GraalVM                                    | 🏃‍♂️‍➡️ Started in 0.236 seconds | 185 Mo             |
-| docker natif avec buildpack                           | Started in 0.554 seconds          |                    |
+| Configuration                                              | Start Time                       | Taille du livrable |
+|------------------------------------------------------------|----------------------------------|--------------------|
+| JVM dev                                                    | Started in 1.911 seconds         | NA                 |
+| JVM avec un fat jar                                        | Started in 2.605 seconds     🐢  | 61.3 Mo            |
+| JVM avec un fat jar + AOT Spring                           | Started in 2.341 seconds         | 61.6 Mo            |
+| JVM avec un fat jar + AOT Class Loading & Linking (jdk 25) | Started in 1.636 seconds         | 61.3 Mo            |
+| __Docker__ JVM avec buildpack                              | Started in 2.463 seconds         | 259.22 Mo          |
+| __Docker__ JVM + AOT Spring + CDS avec buildpack           | Started in 2.186 seconds         | 321.7 Mo           |
+| __Docker__ JVM + AOT Class Loading & Linking (jdk 25)      | Started in 1.664 seconds         | 543.77 Mo          |
+| Natif avec GraalVM                                         | Started in 0.175 seconds 🏃‍♂️‍➡ | 185 Mo             |
+| __Docker__ natif avec buildpack                            | Started in 0.326 seconds         | 222.65 Mo          |
 
 ```mermaid
+---
+config:
+    xyChart:
+        showDataLabel: true
+    themeVariables:
+        xyChart:
+            titleColor: "#ff0000"
+---
 xychart-beta
-  title "Start Time Comparison"
-  x-axis ["JVM jar", "JVM jar + Class Loading & Linking", Natif, "docker JVM", "docker JVM + AOT Spring + CDS"]
+  title "Jar File : Comparaison temps de démarrage"
+  x-axis ["JVM", "JVM AOT Spring", "JVM AOT jdk 25", "Natif"]
   y-axis "Start Time in s" 0 --> 3.5
-  bar [2.562, 1.656, 0.236, 3.074, 1.63]
-  line [2.562, 1.656, 0.236, 3.074, 1.63] 
+  bar [2.605, 2.341, 1.636, 0.236]
+  line [2.605, 2.341, 1.636, 0.236] 
 ```
 
+```mermaid
+---
+config:
+    xyChart:
+        showDataLabel: true
+    themeVariables:
+        xyChart:
+            titleColor: "#ff0000"
+---
+xychart-beta
+  title "Docker image : Comparaison temps de démarrage"
+  x-axis ["JVM", "JVM AOT Spring CDS", "JVM AOT jdk 25", "Natif"]
+  y-axis "Start Time in s" 0 --> 3.5
+  bar [2.463, 2.186, 1.664, 0.326]
+  line [2.463, 2.186, 1.664, 0.326] 
+```
 
 ---
-
+ 
 Utilisation du profile h2 : __-Dspring.profiles.active=h2__
 
 Utiliser cette url pour acceder à MySql depuis le container :
@@ -50,22 +84,23 @@ spring.datasource.url=jdbc:mysql://host.docker.internal:3306/person
 ---
 
 ## Application Springboot en mode JVM dev
+Pour réaliser ce test on utilise le profile maven `sb_classic`
 
 - Build de l'application
     ```shell
-    mvn clean package
+    mvn -Psb_classic clean package -DskipTests
     ```
 
 - Run de l'application
     ```shell
-    mvn -Dspring.profiles.active=h2 spring-boot:run
+    mvn -Psb_classic spring-boot:run
     ```
 
 ## Application Springboot en mode JVM avec un fat jar
 
 - Build de l'application
     ```shell
-    mvn clean package
+    mvn -Psb_classic clean package -DskipTests
     ```
 
 - Run de l'application
@@ -73,53 +108,81 @@ spring.datasource.url=jdbc:mysql://host.docker.internal:3306/person
     java -Dspring.profiles.active=h2 -jar target/person-app-1.0.0-SNAPSHOT.jar
     ```
 
-## Application Springboot en mode JVM avec un fat jar + Class Loading & Linking (feature jdk >= 24)
+## Application Springboot en mode JVM avec un fat jar + AOT Spring
+Pour réaliser ce test on utilise le profile maven `sb_classic_aotspring`
+
+Pour utiliser l'AOT Spring, il faut activer l'execution du `process-aot` dans le `spring-boot-maven-plugin` du pom.xml
+
+```xml
+    <executions>
+        <execution>
+            <goals>
+                <goal>process-aot</goal>
+            </goals>
+        </execution>
+    </executions>
+```
+- Build de l'application :
+  ```shell
+    mvn -Psb_classic_aotspring clean package -DskipTests
+  ```
+
+- Le jar applicatif contient maintenant le cache AOT Spring. Pour démarrer l'application springboot en mode AOT il faut activer la properties `-Dspring.aot.enabled=true`
+  ```shell
+    java -Dspring.aot.enabled=true -Dspring.profiles.active=h2 -jar target/person-app-1.0.0-SNAPSHOT.jar
+  ```
+
+## Application Springboot en mode JVM avec un fat jar + Class Loading & Linking (jdk 25)
+### Avec java 25 [JEP 514](https://openjdk.org/jeps/514), [JEP 515](https://openjdk.org/jeps/515), [JEP 519](https://openjdk.org/jeps/519), [JEP 521](https://openjdk.org/jeps/521)
+
+- Vérification de la configuration :
+
+  ```shell
+    mvn -version
+  ```
+
+```log
+Apache Maven 3.9.6 (bc0240f3c744dd6b6ec2920b3cd08dcc295161ae)
+Maven home: /Users/fredericmencier/Projects/apache-maven-3.9.6
+Java version: 25, vendor: BellSoft, runtime: /Users/fredericmencier/.sdkman/candidates/java/25-librca
+Default locale: fr_FR, platform encoding: UTF-8
+OS name: "mac os x", version: "26.0.1", arch: "aarch64", family: "mac"
+```
 
 - Build de l'application
-    ```shell
-    mvn clean package
-    ```
-
-- Preparation du fichier de configuration AOT `person.aotconf`
-
-  1️⃣ Démarrer l'app en mode __training__ pour construire le cache AOT
-  
   ```shell
-  java -XX:AOTMode=record -XX:AOTConfiguration=person.aotconf -Dspring.profiles.active=h2 -jar target/person-app-1.0.0-SNAPSHOT.jar
+    mvn -Psb_classic clean package -DskipTests
   ```
   
-  2️⃣ Création du fichier de cache `person.aot`
-  ```shell
-  java -XX:AOTMode=create -XX:AOTConfiguration=person.aotconf -XX:AOTCache=person.aot -cp target/person-app-1.0.0-SNAPSHOT.jar
-  ```
-
-- Run de l'application
-  ```shell
-  java -XX:AOTCache=person.aot -Dspring.profiles.active=h2 -jar target/person-app-1.0.0-SNAPSHOT.jar
-  ```
-## Avec java 25 [JEP 514](https://openjdk.org/jeps/514), [JEP 515](https://openjdk.org/jeps/515), [JEP 519](https://openjdk.org/jeps/519), [JEP 521](https://openjdk.org/jeps/521)
-
 ### JEP 514 : Ahead-of-Time Class Loading & Linking
 Le `AOTMode=record` et `AOTMode=create` peuvent être combinés en une seule commande : `AOTCacheOutput`
 
-  1️⃣ Création du fichier de cache `person.aot`
+-> Création du fichier de cache `person.aot`
+
+- Démarrage de l'application en mode training afin de créer le fichier `person.aot`
   ```shell
-    java -XX:AOTCacheOutput=person.aotconf -Dspring.context.exit=onRefresh -cp target/person-app-1.0.0-SNAPSHOT.jar
+    java -XX:AOTCacheOutput=target/person.aot -Dspring.context.exit=onRefresh -Dspring.profiles.active=h2 -jar target/person-app-1.0.0-SNAPSHOT.jar
   ```
 
-  - Run de l'application
-    ```shell
-    java -XX:AOTCache=person.aot -Dspring.profiles.active=h2 -jar target/person-app-1.0.0-SNAPSHOT.jar
-    ```
+- Run de l'application en utilisant le fichier `person.aot`
+  ```shell
+    java -XX:AOTCache=target/person.aot -Dspring.profiles.active=h2 -jar target/person-app-1.0.0-SNAPSHOT.jar
+  ```
 
 ### JEP 515 : Ahead-of-Time Method Profiling
 Cette fonctionnalité vient par défaut avec le java 25. Il n'y a pas de paramètre spécifique à ajouter.
 
 ### JEP 519 : Compact Object Headers
+Pour pouvoir utiliser le cache aot avec CompactObjectHeaders il faut avoir buildé le cache aot avec la directive `-XX:+UseCompactObjectHeaders`
+
+- Build du cache avec CompactObjectHeaders
+  ```shell
+  java -XX:+UseCompactObjectHeaders -XX:AOTCacheOutput=target/person.aot -Dspring.context.exit=onRefresh -Dspring.profiles.active=h2 -jar target/person-app-1.0.0-SNAPSHOT.jar
+  ```
 
 - Run de l'application
   ```shell
-  java -XX:+UseCompactObjectHeaders -XX:AOTCache=person.aot -Dspring.profiles.active=h2 -jar target/person-app-1.0.0-SNAPSHOT.jar
+  java -XX:+UseCompactObjectHeaders -XX:AOTCache=target/person.aot -Dspring.profiles.active=h2 -jar target/person-app-1.0.0-SNAPSHOT.jar
   ```
 
 ### JEP 521: Generational Shenandoah
@@ -128,13 +191,13 @@ Utiliser un openjdk 25 (Liberica par exemple)
 
 - Run de l'application
   ```shell
-  java -XX:+UseShenandoahGC -XX:ShenandoahGCMode=generational  -XX:AOTCache=person.aot -Dspring.profiles.active=h2 -jar target/person-app-1.0.0-SNAPSHOT.jar
+  java -XX:+UseShenandoahGC -XX:ShenandoahGCMode=generational -Dspring.profiles.active=h2 -jar target/person-app-1.0.0-SNAPSHOT.jar
   ```
 
 ## Application Springboot en mode container docker JVM avec buildpack
 
-- Dans la configuration du spring-boot-maven-plugin, ajouter les options suivantes
-  - 
+- Pour réaliser ce test, on utilise le profile maven `sb_classic_docker_buildpack` qui contient les options suivantes :
+
 ```xml
     <configuration>
         <image>
@@ -153,7 +216,7 @@ buildpacks pour construire l'image.
 
 - Build de l'application
   ```shell
-  mvn clean -Dimage.suffix=jvm spring-boot:build-image
+  mvn clean -DskipTests -Psb_classic_docker_buildpack -Dimage.suffix=jvm spring-boot:build-image
   ```
 
 - Run de l'application
@@ -161,9 +224,9 @@ buildpacks pour construire l'image.
   docker run -i --rm -p 8080:8080 docker.io/library/person-app-jvm:1.0.0-SNAPSHOT
   ```
 
-## Application Springboot en mode container docker JVM avec buildpack + CDS + AOT avec buildpack
+## Application Springboot en mode container docker JVM + CDS + AOT Spring avec buildpack
 
-Dans la configuration du spring-boot-maven-plugin, ajouter les options suivantes:
+- Pour réaliser ce test, on utilise le profile maven `sb_cds_aot_docker_buildpack` qui contient les options suivantes :
 
 ```xml
     <configuration>
@@ -185,17 +248,17 @@ Dans la configuration du spring-boot-maven-plugin, ajouter les options suivantes
 
 - Build de l'application
   ```shell
-  mvn clean -Dimage.suffix=jvm spring-boot:build-image
+  mvn clean -DskipTests -Psb_cds_aot_docker_buildpack -Dimage.suffix=jvm-cds-aot spring-boot:build-image
   ```
 
 - Run de l'application
   ```shell
-  docker run -i --rm -p 8080:8080 docker.io/library/person-app-jvm:1.0.0-SNAPSHOT
+  docker run -i --rm -p 8080:8080 docker.io/library/person-app-jvm-cds-aot:1.0.0-SNAPSHOT
   ```
 
-## Application Springboot en mode container docker JVM AOT Spring + CDS ou AOT Spring +  AOT Class Loading & Linking
+## Application Springboot en mode container docker JVM + AOT Class Loading & Linking (jdk 25)
 
-La génération du fichier AOT Cache (Projet Leyden) n'est pas possible actuellement avec buildpack. Nous utilisons un packaging classique avec Dockerfile.
+La génération du fichier AOT Cache du jdk 25 (Projet Leyden) n'est pas possible actuellement avec buildpack. Nous utilisons un packaging classique avec Dockerfile.
 
 Rappels :
 - `CDS` (Class Data Sharing) : permet de pré-charger et partager des classes dans une archive (__.jsa__).
@@ -209,119 +272,112 @@ Rappels :
 
 ✅ La cohabitation entre `-XX:SharedArchiveFile=` et `-XX:AOTCache=` n'est pas possible mais il faut savoir que :
   - Pour un jdk < 24 l'utilisation de __CDS__ est intéressante  
-  - Pour un jdk >= 24 il est préférable d'utiliser __AOTCache__
+  - Pour un jdk >= 24 il est préférable d'utiliser __AOTCache__ du jdk
 
-### Mise en oeuvre à l'aide d'un container docker :
-
-1️⃣ `AOT Spring` : Activer l'execution du `process-aot` dans le `spring-boot-maven-plugin` du pom.xml
-
-```xml
-    <executions>
-        <execution>
-            <goals>
-                <goal>process-aot</goal>
-            </goals>
-        </execution>
-    </executions>
-```
-Build de l'application :
-```shell
-  mvn clean package
-```
-
-Le jar applicatif contient maintenant le cache AOT Spring. Pour démarrer l'application springboot en mode AOT il faut activer la properties `-Dspring.aot.enabled=true`
-```shell
-  java -Dspring.aot.enabled=true -jar target/xxxxx.jar
-```
-
-
-2️⃣ `CDS` : Utilisation de `java -XX:ArchiveClassesAtExit=application.jsa`
-
-Docker file utilisé pour activer CDS sur l'application :
-
-```dockerfile
-  FROM bellsoft/liberica-openjre-debian:25-cds
-  WORKDIR /application
-  ARG JAR_FILE=target/*.jar
-  # Copy the jar file to the working directory and rename it to application.jar
-  COPY ${JAR_FILE} application.jar
-  # Execute the CDS training run
-  RUN java -XX:ArchiveClassesAtExit=application.jsa -Dspring.context.exit=onRefresh -Dspring.profiles.active=h2 -jar application.jar
-  # Start the application jar with CDS and AOT Spring
-  ENTRYPOINT ["java", "-XX:SharedArchiveFile=application.jsa", "-Dspring.profiles.active=h2", "-jar", "application.jar"]
-```
-
-Packaging de l'application dans une image docker :
-  ```shell
-    docker build -f src/main/docker/Dockerfile.jvm_cds -t springboot-person-app-jvm-cds:person-app-1.0.0-SNAPSHOT .
-  ```
-
-Run de l'application
-  ```shell
-    docker run -i --rm -p 8080:8080 springboot-person-app-jvm-cds:person-app-1.0.0-SNAPSHOT
-  ```
-
-3️⃣ `JVM AOT Cache` :
+### Mise en oeuvre à l'aide du docker file `Dockerfile.jvm_aotcache`
 
 Ajouter dans le Dockerfile les instructions permettant la création du cache AOT
 
-```dockerfile
-  FROM bellsoft/liberica-openjre-debian:25-cds
-  WORKDIR /application
-  ARG JAR_FILE=target/*.jar
-  # Copy the jar file to the working directory and rename it to application.jar
-  COPY ${JAR_FILE} application.jar
-  # Execute the AOT cache training run
-  RUN java -XX:AOTMode=record -XX:AOTConfiguration=app.aotconf -Dspring.context.exit=onRefresh -jar application.jar
-  RUN java -XX:AOTMode=create -XX:AOTConfiguration=app.aotconf -XX:AOTCache=app.aot -jar application.jar && rm app.aotconf
-  # Start the application jar AOT Spring and AOT Cache
-  ENTRYPOINT ["java", "-XX:AOTCache=app.aot", "-jar", "application.jar"]
-```
-
-Packaging de l'application dans une image docker :
+- Build de l'application
   ```shell
-    docker build -f src/main/docker/Dockerfile.jvm_aotcache -t springboot-person-app-jvm-aotcache:person-app-1.0.0-SNAPSHOT .
+  mvn -Psb_classic clean package -DskipTests
   ```
 
-Run de l'application
+```dockerfile
+FROM bellsoft/liberica-openjre-debian:25-cds
+WORKDIR /application
+ARG JAR_FILE=target/*.jar
+# Copy the jar file to the working directory and rename it to person.jar
+COPY ${JAR_FILE} person.jar
+# Execute the AOT cache training run
+RUN java -XX:AOTCacheOutput=person.aot -Dspring.context.exit=onRefresh -Dspring.profiles.active=h2 -jar person.jar
+# Start the application jar AOT Spring and AOT Cache
+ENTRYPOINT ["java", "-XX:AOTCache=person.aot", "-Dspring.profiles.active=h2", "-jar", "person.jar"]
+```
+
+- Packaging de l'application dans une image docker :
   ```shell
-    docker run -i --rm -p 8080:8080 springboot-person-app-jvm-aotcache:person-app-1.0.0-SNAPSHOT
+  docker build -f src/main/docker/Dockerfile.jvm_aotcache -t springboot-person-app-jvm-aotcache:person-app-1.0.0-SNAPSHOT .
+  ```
+
+- Run de l'application
+  ```shell
+  docker run -i --rm -p 8080:8080 springboot-person-app-jvm-aotcache:person-app-1.0.0-SNAPSHOT
   ```
 
 ## Application Springboot en mode natif avec GraalVM (necessite GraalVM installé)
 
 Il faut préalablement avoir installé GraalVM et le support natif pour Java. Pour cela, le plugin __native-maven-plugin__ est utilisé.
 
-- Vérification avant le build :
+- Vérification de la configuration :
 
   ```shell
   mvn -version
   ```
 
-  ```log
-  Apache Maven 3.9.6 (bc0240f3c744dd6b6ec2920b3cd08dcc295161ae)
-  Maven home: /Users/fredericmencier/Projects/apache-maven-3.9.6
-  Java version: 21.0.8, vendor: Oracle Corporation, runtime: /Users/fredericmencier/.sdkman/candidates/java/21.0.8-graal
-  Default locale: fr_FR, platform encoding: UTF-8
-  OS name: "mac os x", version: "14.4.1", arch: "aarch64", family: "mac"
-  ```
+```log
+Apache Maven 3.9.6 (bc0240f3c744dd6b6ec2920b3cd08dcc295161ae)
+Maven home: /Users/fredericmencier/Projects/apache-maven-3.9.6
+Java version: 21.0.8, vendor: Oracle Corporation, runtime: /Users/fredericmencier/.sdkman/candidates/java/21.0.8-graal
+Default locale: fr_FR, platform encoding: UTF-8
+OS name: "mac os x", version: "14.4.1", arch: "aarch64", family: "mac"
+```
+
+Le build natif utilise la configuration suivante :
+```xml
+<build>
+    <plugins>
+        <plugin>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-maven-plugin</artifactId>
+            <configuration>
+                <profiles>
+                    <profile>h2</profile>
+                </profiles>
+            </configuration>
+        </plugin>
+        <plugin>
+            <groupId>org.graalvm.buildtools</groupId>
+            <artifactId>native-maven-plugin</artifactId>
+            <configuration>
+                <imageName>person-app-native</imageName>
+            </configuration>
+        </plugin>
+    </plugins>
+</build>
+```
 
 - Build de l'application
   ```shell
-  mvn clean native:compile -Pnative
+  mvn clean package -DskipTests -Pnative native:compile
   ```
 - Run de l'application
   ```shell
-  ./target/person-app
+  ./target/person-app-native
   ```
 
 ## Application Springboot en mode container docker natif avec buildpack
 
+En utilisant buildpack, nous n'avons plus besoin d'avoir un GraalVM en local.
 Commande permettant de construire l'image docker __NATIVE__ avec le plugin __native-maven-plugin__. Ce plugin utilise buildpacks pour construire l'image.
+
+La configuration suivante est nécéssaire pour réaliser le build image natif :
+```xml
+<build>
+    <plugins>
+        <plugin>
+            <groupId>org.graalvm.buildtools</groupId>
+            <artifactId>native-maven-plugin</artifactId>
+        </plugin>
+    </plugins>
+</build>
+```
+Le profile `-Pnative` est hérité du spring-boot-starter-parent
+
 
 - Build de l'application
   ```shell
-  mvn -Dimage.suffix=native spring-boot:build-image -Pnative
+  mvn -DskipTests spring-boot:build-image -Dspring-boot.build-image.imageName=person-app-native:1.0.0-SNAPSHOT -Pnative
   ```
 
 - Run de l'application

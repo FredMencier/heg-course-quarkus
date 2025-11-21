@@ -1,10 +1,9 @@
 FROM bellsoft/liberica-openjre-debian:25-cds
 WORKDIR /application
 ARG JAR_FILE=target/*.jar
-# Copy the jar file to the working directory and rename it to application.jar
-COPY ${JAR_FILE} application.jar
+# Copy the jar file to the working directory and rename it to person.jar
+COPY ${JAR_FILE} person.jar
 # Execute the AOT cache training run
-RUN java -XX:AOTMode=record -XX:AOTConfiguration=app.aotconf -Dspring.context.exit=onRefresh -Dspring.profiles.active=h2 -jar application.jar
-RUN java -XX:AOTMode=create -XX:AOTConfiguration=app.aotconf -XX:AOTCache=app.aot -Dspring.profiles.active=h2 -jar application.jar && rm app.aotconf
-# Start the application jar with CDS and AOT Spring and AOT Cache
-ENTRYPOINT ["java", "-XX:AOTCache=app.aot", "-Dspring.profiles.active=h2", "-jar", "application.jar"]
+RUN java -XX:AOTCacheOutput=person.aot -Dspring.context.exit=onRefresh -Dspring.profiles.active=h2 -jar person.jar
+# Start the application jar AOT Spring and AOT Cache
+ENTRYPOINT ["java", "-XX:AOTCache=person.aot", "-Dspring.profiles.active=h2", "-jar", "person.jar"]
