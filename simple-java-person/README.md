@@ -12,15 +12,15 @@ Default locale: fr_FR, platform encoding: UTF-8
 OS name: "mac os x", version: "26.0.1", arch: "aarch64", family: "mac"
 ```
 
-- [Application Springboot en mode JVM dev](#Application-Springboot-en-mode-JVM-dev)
-- [Application Springboot en mode JVM avec un fat jar](#Application-Springboot-en-mode-JVM-avec-un-fat-jar)
-- [Application Springboot en mode JVM avec un fat jar + AOT Spring](#Application-Springboot-en-mode-JVM-avec-un-fat-jar-AOT-Spring)
-- [Application Springboot en mode JVM avec un fat jar + Class Loading & Linking (jdk 25)](#Application-Springboot-en-mode-JVM-avec-un-fat-jar-Class-Loading-Linking-jdk-25) - [JEP 514](https://openjdk.org/jeps/514)
-- [Application Springboot en mode container docker JVM avec buildpack](#Application-Springboot-en-mode-container-docker-JVM-avec-buildpack)
-- [Application Springboot en mode container docker JVM + CDS + AOT Spring avec buildpack](#Application-Springboot-en-mode-container-docker-JVM-CDS-AOT-Spring-avec-buildpack)
-- [Application Springboot en mode container docker JVM + AOT Class Loading & Linking (jdk 25)](#Application-Springboot-en-mode-container-docker-JVM-AOT-Class-Loading-Linking-jdk-25)
-- [Application Springboot en mode natif avec GraalVM (necessite GraalVM installé)](#Application-Springboot-en-mode-natif-avec-GraalVM-necessite-GraalVM-installé)
-- [Application Springboot en mode container docker natif avec buildpack](Application-Springboot-en-mode-container-docker-natif-avec-buildpack)
+- [Application Springboot en mode JVM dev](#application-springboot-en-mode-jvm-dev)
+- [Application Springboot en mode JVM avec un fat jar](#application-springboot-en-mode-jvm-avec-un-fat-jar)
+- [Application Springboot en mode JVM avec un fat jar + AOT Spring](#application-springboot-en-mode-jvm-avec-un-fat-jar--aot-spring)
+- [Application Springboot en mode JVM avec un fat jar + Class Loading & Linking (jdk 25)](#application-springboot-en-mode-jvm-avec-un-fat-jar--class-loading--linking-jdk-25) - [JEP 514](https://openjdk.org/jeps/514)
+- [Application Springboot en mode container docker JVM avec buildpack](#application-springboot-en-mode-container-docker-jvm-avec-buildpack)
+- [Application Springboot en mode container docker JVM + CDS + AOT Spring avec buildpack](#application-springboot-en-mode-container-docker-jvm--cds--aot-spring-avec-buildpack)
+- [Application Springboot en mode container docker JVM + AOT Class Loading & Linking (jdk 25)](#application-springboot-en-mode-container-docker-jvm--aot-class-loading--linking-jdk-25)
+- [Application Springboot en mode natif avec GraalVM (necessite GraalVM installé)](#application-springboot-en-mode-natif-avec-graalvm-necessite-graalvm-installé)
+- [Application Springboot en mode container docker natif avec buildpack](#application-springboot-en-mode-container-docker-natif-avec-buildpack)
 
 ---
 
