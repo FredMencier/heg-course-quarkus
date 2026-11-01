@@ -1,0 +1,1 @@
+var e=`/heg-course-quarkus/assets/metrics_person_jvm-B5PsH6ub.png`;export{e as t};

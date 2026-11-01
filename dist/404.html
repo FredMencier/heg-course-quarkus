@@ -4,14 +4,70 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Quarkus - Slidev</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&family=PT+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" type="text/css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@200;400;600&family=JetBrains+Mono:wght@200;400;600&display=swap" type="text/css">
+<link rel="preload" as="image" href="/heg-course-quarkus/images/computer_program.jpg">
+<link rel="preload" as="image" href="/heg-course-quarkus/images/background.jpg">
+<link rel="preload" as="image" href="/heg-course-quarkus/images/quarkus_logo.png">
+<link rel="preload" as="image" href="/heg-course-quarkus/images/popular_frameworks_2024.png">
+<link rel="preload" as="image" href="/heg-course-quarkus/images/popular_frameworks_2025.png">
+<link rel="preload" as="image" href="/heg-course-quarkus/images/wildfly_logo.png">
+<link rel="preload" as="image" href="/heg-course-quarkus/images/spring_logo.png">
+<link rel="preload" as="image" href="/heg-course-quarkus/images/micronaut_logo.png">
+<link rel="preload" as="image" href="/heg-course-quarkus/images/helidon_logo.png">
+<link rel="preload" as="image" href="/heg-course-quarkus/images/quarkus_timeline.svg">
+<link rel="preload" as="image" href="/heg-course-quarkus/images/app_big_picture_before_1.svg">
+<link rel="preload" as="image" href="/heg-course-quarkus/images/app_big_picture_before_2.svg">
+<link rel="preload" as="image" href="/heg-course-quarkus/images/app_big_picture_before_3.svg">
+<link rel="preload" as="image" href="/heg-course-quarkus/images/app_big_picture_now_1.svg">
+<link rel="preload" as="image" href="/heg-course-quarkus/images/app_big_picture_now_2.svg">
+<link rel="preload" as="image" href="/heg-course-quarkus/images/app_big_picture_now_3.svg">
+<link rel="preload" as="image" href="/heg-course-quarkus/images/docker_springboot_concept_diagram.png">
+<link rel="preload" as="image" href="/heg-course-quarkus/images/zoom_now.svg">
+<link rel="preload" as="image" href="/heg-course-quarkus/images/compil_native_process_1.svg">
+<link rel="preload" as="image" href="/heg-course-quarkus/images/compil_native_process_2.svg">
+<link rel="preload" as="image" href="/heg-course-quarkus/images/compil_native_process_3.svg">
+<link rel="preload" as="image" href="/heg-course-quarkus/images/compil_native_process_full.svg">
+<link rel="preload" as="image" href="/heg-course-quarkus/images/graalvm.png">
+<link rel="preload" as="image" href="/heg-course-quarkus/images/image-native-creation.png">
+<link rel="preload" as="image" href="/heg-course-quarkus/images/start-jit-vs-native.png">
+<link rel="preload" as="image" href="/heg-course-quarkus/images/perf-jvm-native.png">
+<link rel="preload" as="image" href="/heg-course-quarkus/images/quarkus_metrics.png">
+<link rel="preload" as="image" href="/heg-course-quarkus/images/quarkus_architecture.png">
+<link rel="preload" as="image" href="/heg-course-quarkus/images/quarkus_extensions_focus.png">
+<link rel="preload" as="image" href="/heg-course-quarkus/images/quarkus_buildtime_traditional.png">
+<link rel="preload" as="image" href="/heg-course-quarkus/images/quarkus_buildtime_new.png">
+<link rel="preload" as="image" href="/heg-course-quarkus/images/docker_quarkus_concept_diagram.png">
+<link rel="preload" as="image" href="/heg-course-quarkus/images/metrics_person_jvm.png">
+<link rel="preload" as="image" href="/heg-course-quarkus/images/metrics_person_native.png">
+<link rel="preload" as="image" href="/heg-course-quarkus/images/quarkus_rest_app.png">
+<link rel="preload" as="image" href="/heg-course-quarkus/images/quarkus_rest_db_app.png">
+<link rel="preload" as="image" href="/heg-course-quarkus/images/quarkus_rest_reactive_app.png">
+<link rel="preload" as="image" href="/heg-course-quarkus/images/quarkus_cli_app.png">
+<link rel="preload" as="image" href="/heg-course-quarkus/images/workshop.svg">
+<link rel="preload" as="image" href="/heg-course-quarkus/images/pokemon_model.png">
+<link rel="preload" as="image" href="/heg-course-quarkus/images/console_h2_login.png">
+<link rel="preload" as="image" href="/heg-course-quarkus/images/console_h2_data.png">
+<link rel="preload" as="image" href="/heg-course-quarkus/images/workshop_rest_pokemon.svg">
+<link rel="preload" as="image" href="/heg-course-quarkus/images/workshop_rest_pokemon_fight.svg">
+<link rel="preload" as="image" href="/heg-course-quarkus/images/ui-pokemon-0.png">
+<link rel="preload" as="image" href="/heg-course-quarkus/images/realisation_10.png">
+<link rel="preload" as="image" href="/heg-course-quarkus/images/realisation_11.png">
+<link rel="preload" as="image" href="/heg-course-quarkus/images/realisation_20.png">
+<link rel="preload" as="image" href="/heg-course-quarkus/images/realisation_30.jpeg">
+<link rel="preload" as="image" href="/heg-course-quarkus/images/realisation_41.png">
+<link rel="preload" as="image" href="/heg-course-quarkus/images/realisation_40.png">
+<link rel="preload" as="image" href="/heg-course-quarkus/images/realisation_50.jpeg">
+<link rel="preload" as="image" href="/heg-course-quarkus/images/realisation_51.jpeg">
 <link rel="icon" href="https://cdn.jsdelivr.net/gh/slidevjs/slidev/assets/favicon.png">
-<meta property="slidev:version" content="51.8.2">
-<meta property="og:title" content="Quarkus - Slidev">  <script type="module" crossorigin src="/heg-course-quarkus/assets/index-CDFNvf57.js"></script>
-  <link rel="modulepreload" crossorigin href="/heg-course-quarkus/assets/modules/vue-DQCc9qUB.js">
-  <link rel="modulepreload" crossorigin href="/heg-course-quarkus/assets/modules/shiki-BhC9jn9d.js">
-  <link rel="stylesheet" crossorigin href="/heg-course-quarkus/assets/modules/shiki-Do831mNu.css">
-  <link rel="stylesheet" crossorigin href="/heg-course-quarkus/assets/index-CVEzhpT6.css">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta property="slidev:version" content="53.0.0">
+<meta property="og:title" content="Quarkus - Slidev">  <script type="module" crossorigin src="/heg-course-quarkus/assets/index-Iu1xLTl8.js"></script>
+  <link rel="modulepreload" crossorigin href="/heg-course-quarkus/assets/rolldown-runtime-XKyaHtl9.js">
+  <link rel="modulepreload" crossorigin href="/heg-course-quarkus/assets/modules/shiki-pVwvuQkB.js">
+  <link rel="modulepreload" crossorigin href="/heg-course-quarkus/assets/slidev/utils-Bfetavjz.js">
+  <link rel="modulepreload" crossorigin href="/heg-course-quarkus/assets/modules/vue-AgNkrhV0.js">
+  <link rel="stylesheet" crossorigin href="/heg-course-quarkus/assets/modules/shiki-V4-KMA-J.css">
+  <link rel="stylesheet" crossorigin href="/heg-course-quarkus/assets/index-CZfxh_Jp.css">
 </head>
 <body>
   <div id="app"></div>

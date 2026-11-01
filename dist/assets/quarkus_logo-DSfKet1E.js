@@ -1,0 +1,1 @@
+var e=`/heg-course-quarkus/assets/quarkus_logo-CsK1_mg7.png`;export{e as t};
